@@ -1,4 +1,4 @@
-package com.arctouch.codechallenge.home;
+package com.arctouch.codechallenge.ui.home;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -19,13 +19,18 @@ import java.util.List;
 
 public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
 
+    private static final int LOADING = 1;
+    private static final int ITEM = 0;
     private List<Movie> movies;
+    private MovieChoosingCallback movieChoosingCallback;
+    private boolean isLoadingAdded = false;
 
-    public HomeAdapter(List<Movie> movies) {
+    public HomeAdapter(MovieChoosingCallback callback, List<Movie> movies) {
+        this.movieChoosingCallback = callback;
         this.movies = movies;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         private final MovieImageUrlBuilder movieImageUrlBuilder = new MovieImageUrlBuilder();
 
@@ -40,6 +45,9 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
             genresTextView = itemView.findViewById(R.id.genresTextView);
             releaseDateTextView = itemView.findViewById(R.id.releaseDateTextView);
             posterImageView = itemView.findViewById(R.id.posterImageView);
+            itemView.setOnClickListener(view -> {
+                movieChoosingCallback.onMovieChoosed(movies.get(getAdapterPosition()));
+            });
         }
 
         public void bind(Movie movie) {
@@ -66,11 +74,67 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return movies.size();
+        return movies == null ? 0 : movies.size();
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.bind(movies.get(position));
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return (position == movies.size() - 1 && isLoadingAdded) ? LOADING : ITEM;
+    }
+
+    public void add(Movie movie){
+        movies.add(movie);
+        notifyItemInserted(movies.size() - 1);
+    }
+
+    public void addAll(List<Movie> movies){
+        for (Movie movie : movies) {
+            add(movie);
+        }
+    }
+
+    public void remove(Movie movie){
+        int position = movies.indexOf(movie);
+        if (position > -1) {
+            movies.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void clear() {
+        isLoadingAdded = false;
+        while (getItemCount() > 0) {
+            remove(getItem(0));
+        }
+    }
+
+    public boolean isEmpty() {
+        return getItemCount() == 0;
+    }
+
+    public void addLoadingFooter() {
+        isLoadingAdded = true;
+        add(new Movie());
+    }
+
+    public void removeLoadingFooter() {
+        isLoadingAdded = false;
+
+        int position = movies.size() - 1;
+        Movie item = getItem(position);
+
+        if (item != null) {
+            movies.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public Movie getItem(int position) {
+        return movies.get(position);
     }
 }

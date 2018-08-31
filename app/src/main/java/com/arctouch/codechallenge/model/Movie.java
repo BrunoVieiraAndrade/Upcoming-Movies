@@ -39,6 +39,38 @@ public class Movie {
         return releaseDate != null ? releaseDate.equals(movie.releaseDate) : movie.releaseDate == null;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public List<Genre> getGenres() {
+        return genres;
+    }
+
+    public List<Integer> getGenreIds() {
+        return genreIds;
+    }
+
+    public String getPosterPath() {
+        return posterPath;
+    }
+
+    public String getBackdropPath() {
+        return backdropPath;
+    }
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
     @Override
     public int hashCode() {
         int result = id;
