@@ -30,6 +30,11 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         this.movies = movies;
     }
 
+    public void setMovies(List<Movie> movies) {
+        this.movies = movies;
+        notifyDataSetChanged();
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private final MovieImageUrlBuilder movieImageUrlBuilder = new MovieImageUrlBuilder();
