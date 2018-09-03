@@ -26,7 +26,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
     private MovieChoosingCallback movieChoosingCallback;
     private boolean isLoadingAdded = false;
 
-    public HomeAdapter(MovieChoosingCallback callback) {
+    HomeAdapter(MovieChoosingCallback callback) {
         movies = new ArrayList<>();
         this.movieChoosingCallback = callback;
     }
@@ -36,7 +36,12 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public void setMovies(List<Movie> movies) {
+        this.movies = movies;
+        notifyDataSetChanged();
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         private final MovieImageUrlBuilder movieImageUrlBuilder = new MovieImageUrlBuilder();
 
@@ -45,24 +50,22 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         private final TextView releaseDateTextView;
         private final ImageView posterImageView;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.titleTextView);
             genresTextView = itemView.findViewById(R.id.genresTextView);
             releaseDateTextView = itemView.findViewById(R.id.releaseDateTextView);
             posterImageView = itemView.findViewById(R.id.posterImageView);
-            itemView.setOnClickListener(view -> {
-                movieChoosingCallback.onMovieChoosed(movies.get(getAdapterPosition()));
-            });
+            itemView.setOnClickListener(view -> movieChoosingCallback.onMovieChoosed(movies.get(getAdapterPosition())));
         }
 
-        public void bind(Movie movie) {
+        void bind(Movie movie) {
             titleTextView.setText(movie.title);
             genresTextView.setText(TextUtils.join(", ", movie.genres));
             releaseDateTextView.setText(movie.releaseDate);
 
             String posterPath = movie.posterPath;
-            if (TextUtils.isEmpty(posterPath) == false) {
+            if (!TextUtils.isEmpty(posterPath)) {
                 Glide.with(itemView)
                         .load(movieImageUrlBuilder.buildPosterUrl(posterPath))
                         .apply(new RequestOptions().placeholder(R.drawable.ic_image_placeholder))
@@ -93,51 +96,9 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         return (position == movies.size() - 1 && isLoadingAdded) ? LOADING : ITEM;
     }
 
-    public void add(Movie movie){
+    public void add(Movie movie) {
         movies.add(movie);
         notifyItemInserted(movies.size() - 1);
-    }
-
-    public void addAll(List<Movie> movies){
-        for (Movie movie : movies) {
-            add(movie);
-        }
-    }
-
-    public void remove(Movie movie){
-        int position = movies.indexOf(movie);
-        if (position > -1) {
-            movies.remove(position);
-            notifyItemRemoved(position);
-        }
-    }
-
-    public void clear() {
-        isLoadingAdded = false;
-        while (getItemCount() > 0) {
-            remove(getItem(0));
-        }
-    }
-
-    public boolean isEmpty() {
-        return getItemCount() == 0;
-    }
-
-    public void addLoadingFooter() {
-        isLoadingAdded = true;
-        add(new Movie());
-    }
-
-        public void removeLoadingFooter() {
-            isLoadingAdded = false;
-
-            int position = movies.size() - 1;
-            Movie item = getItem(position);
-
-            if (item != null) {
-                movies.remove(position);
-                notifyItemRemoved(position);
-            }
     }
 
     public Movie getItem(int position) {
