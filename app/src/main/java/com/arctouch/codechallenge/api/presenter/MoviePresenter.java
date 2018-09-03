@@ -4,6 +4,7 @@ import com.arctouch.codechallenge.api.TmdbApi;
 import com.arctouch.codechallenge.data.Cache;
 import com.arctouch.codechallenge.model.Genre;
 import com.arctouch.codechallenge.model.Movie;
+import com.arctouch.codechallenge.ui.home.HomeActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,14 @@ public class MoviePresenter {
 
     }
 
+    public void loadMovies(MoviesLoadingCallback callback, long page){
+        api.upcomingMovies(TmdbApi.API_KEY, TmdbApi.DEFAULT_LANGUAGE, page, TmdbApi.DEFAULT_REGION)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response -> setGenresOnMovies(response.results, callback));
+
+    }
+
     private void setGenresOnMovies(List<Movie> movies, MoviesLoadingCallback callback) {
         for (Movie movie : movies) {
             movie.genres = new ArrayList<>();
@@ -53,6 +62,10 @@ public class MoviePresenter {
             }
         }
         callback.onMoviesLoaded(movies);
+    }
+
+    public void loadGenresAndMovies(MoviesLoadingCallback callback, int page) {
+        loadMovies(callback, page);
     }
 
     public interface MoviesLoadingCallback{

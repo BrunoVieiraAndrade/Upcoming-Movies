@@ -14,6 +14,7 @@ import com.arctouch.codechallenge.base.BaseActivity;
 import com.arctouch.codechallenge.model.Movie;
 import com.arctouch.codechallenge.ui.moviedetail.MovieDetailActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends BaseActivity implements MovieChoosingCallback, MoviePresenter.MoviesLoadingCallback {
@@ -21,7 +22,10 @@ public class HomeActivity extends BaseActivity implements MovieChoosingCallback,
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
     MoviePresenter moviePresenter;
+    HomeAdapter homeAdapter;
     List<Movie> movies;
+    boolean noMorePages;
+    int currentPage = 1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,13 +34,34 @@ public class HomeActivity extends BaseActivity implements MovieChoosingCallback,
         this.recyclerView = findViewById(R.id.recyclerView);
         this.progressBar = findViewById(R.id.progressBar);
         moviePresenter = new MoviePresenter();
+        homeAdapter = new HomeAdapter(this);
+        initializeList();
         moviePresenter.loadGenresAndMovies(this);
+    }
+
+    private void initializeList() {
+        movies = new ArrayList<>();
+        recyclerView.setAdapter(homeAdapter);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (!recyclerView.canScrollVertically(1) && !noMorePages) {
+                    moviePresenter.loadGenresAndMovies(HomeActivity.this, currentPage + 1);
+                    currentPage++;
+                }
+            }
+        });
     }
 
     @Override
     public void onMoviesLoaded(List<Movie> movies) {
+        if(movies.isEmpty()){
+            noMorePages = true;
+            return;
+        }
         this.movies = movies;
-        recyclerView.setAdapter(new HomeAdapter(this, movies));
+        homeAdapter.addMovies(movies);
         progressBar.setVisibility(View.GONE);
     }
 

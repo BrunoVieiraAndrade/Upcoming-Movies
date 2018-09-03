@@ -15,6 +15,7 @@ import com.arctouch.codechallenge.util.MovieImageUrlBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
@@ -25,13 +26,13 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
     private MovieChoosingCallback movieChoosingCallback;
     private boolean isLoadingAdded = false;
 
-    public HomeAdapter(MovieChoosingCallback callback, List<Movie> movies) {
+    public HomeAdapter(MovieChoosingCallback callback) {
+        movies = new ArrayList<>();
         this.movieChoosingCallback = callback;
-        this.movies = movies;
     }
 
-    public void setMovies(List<Movie> movies) {
-        this.movies = movies;
+    public void addMovies(List<Movie> movies) {
+        this.movies.addAll(movies);
         notifyDataSetChanged();
     }
 
@@ -127,16 +128,16 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         add(new Movie());
     }
 
-    public void removeLoadingFooter() {
-        isLoadingAdded = false;
+        public void removeLoadingFooter() {
+            isLoadingAdded = false;
 
-        int position = movies.size() - 1;
-        Movie item = getItem(position);
+            int position = movies.size() - 1;
+            Movie item = getItem(position);
 
-        if (item != null) {
-            movies.remove(position);
-            notifyItemRemoved(position);
-        }
+            if (item != null) {
+                movies.remove(position);
+                notifyItemRemoved(position);
+            }
     }
 
     public Movie getItem(int position) {
