@@ -1,8 +1,7 @@
 package com.arctouch.codechallenge.ui.moviedetail;
 
-import android.graphics.BlurMaskFilter;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,15 +10,12 @@ import com.arctouch.codechallenge.application.App;
 import com.arctouch.codechallenge.model.Movie;
 import com.arctouch.codechallenge.util.MovieImageUrlBuilder;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.request.RequestOptions;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.BlurTransformation;
-
-import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 public class MovieDetailActivity extends AppCompatActivity {
 
@@ -35,8 +31,6 @@ public class MovieDetailActivity extends AppCompatActivity {
     TextView releaseDateTextView;
     @BindView(R.id.posterImageView)
     ImageView posterImageView;
-
-    private Movie movie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +53,8 @@ public class MovieDetailActivity extends AppCompatActivity {
     }
 
     private void onIntentReceived() {
-        this.movie = App.getGson().fromJson(getIntent().getStringExtra("movie"), Movie.class);
-        if(movie!= null){
+        Movie movie = App.getGson().fromJson(getIntent().getStringExtra("movie"), Movie.class);
+        if(movie != null){
             bindMovie(movie);
         }
     }

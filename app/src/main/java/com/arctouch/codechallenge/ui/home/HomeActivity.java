@@ -3,6 +3,7 @@ package com.arctouch.codechallenge.ui.home;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -10,14 +11,13 @@ import android.widget.ProgressBar;
 import com.arctouch.codechallenge.R;
 import com.arctouch.codechallenge.api.presenter.MoviePresenter;
 import com.arctouch.codechallenge.application.App;
-import com.arctouch.codechallenge.base.BaseActivity;
 import com.arctouch.codechallenge.model.Movie;
 import com.arctouch.codechallenge.ui.moviedetail.MovieDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends BaseActivity implements MovieChoosingCallback, MoviePresenter.MoviesLoadingCallback {
+public class HomeActivity extends AppCompatActivity implements MovieChoosingCallback, MoviePresenter.MoviesLoadingCallback {
 
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
